@@ -45,13 +45,13 @@ function buildConfig() {
 
   local _sql_server_block=""
 
-  for node in $nodeList ; do
+  for node in $_node_list ; do
     _sql_server_block+="server $node $node:${_sql_listen_port} check port ${_health_check_port}"$'\n'
   done
 
   local _http_server_block=""
 
-  for node in $nodeList ; do
+  for node in $_node_list ; do
     _http_server_block+="server $node $node:${_http_listen_port} check port ${_health_check_port}"$'\n'
   done
 

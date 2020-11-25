@@ -38,7 +38,7 @@ The following `environment` variables are supported by the Docker image.
 * `HTTP_BIND_PORT` - The port that HAProxy will `bind` and ultimately expose for CockroachDB HTTP connections.  The default is `8080`.
 * `STATS_BIND_PORT` - The port that HAProxy will `bind` and ultimately expose for the HAProxy Statistics Report UI.  The default is `8081`.
 * `SQL_LISTEN_PORT` - The port that the CockroachDB exposes for SQL connections.  The default is `26257`.
-* `HTTP_LISTEN_PORT` - The port that the CockroachDB exposes for HHTP connections.  The default is `8080`.
+* `HTTP_LISTEN_PORT` - The port that the CockroachDB exposes for HTTP connections.  The default is `8080`.
 * `HEALTH_CHECK_PORT` - The port that the CockroachDB uses for health checks.  The default is `8080`.
 
 ## Building the Image

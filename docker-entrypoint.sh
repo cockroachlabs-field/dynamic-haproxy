@@ -3,56 +3,56 @@ set -e
 
 function buildConfig() {
 
-  local db_bind_port="26257"
-  local web_bind_port="8080"
-  local stats_bind_port="8081"
+  local sqlBindPort="26257"
+  local httpBindPort="8080"
+  local statsBindPort="8081"
 
-  local db_listen_port="26257"
-  local web_listen_port="8080"
-  local health_port="8080"
+  local sqlListenPort="26257"
+  local httpListenPort="8080"
+  local healthCheckPort="8080"
 
-  local nodes=$NODES
+  local nodeList=$NODES
 
-  if [[ -n "$DB_BIND_PORT" ]]; then
-    echo "found DB_BIND_PORT [${DB_BIND_PORT}]"
-    db_bind_port = $DB_BIND_PORT
+  if [[ -n "$SQL_BIND_PORT" ]]; then
+    echo "found SQL_BIND_PORT [${SQL_BIND_PORT}]"
+    sqlBindPort = $SQL_BIND_PORT
   fi
 
-  if [[ -n "$WEB_BIND_PORT" ]]; then
-    echo "found WEB_BIND_PORT [${WEB_BIND_PORT}]"
-    web_bind_port = $WEB_BIND_PORT
+  if [[ -n "$HTTP_BIND_PORT" ]]; then
+    echo "found HTTP_BIND_PORT [${HTTP_BIND_PORT}]"
+    httpBindPort = $HTTP_BIND_PORT
   fi
 
   if [[ -n "$STATS_BIND_PORT" ]]; then
     echo "found STATS_BIND_PORT [${STATS_BIND_PORT}]"
-    stats_bind_port = $STATS_BIND_PORT
+    statsBindPort = $STATS_BIND_PORT
   fi
 
-  if [[ -n "$DB_LISTEN_PORT" ]]; then
-    echo "found DB_LISTEN_PORT [${DB_LISTEN_PORT}]"
-    db_listen_port = $DB_LISTEN_PORT
+  if [[ -n "$SQL_LISTEN_PORT" ]]; then
+    echo "found SQL_LISTEN_PORT [${SQL_LISTEN_PORT}]"
+    sqlListenPort = $SQL_LISTEN_PORT
   fi
 
-  if [[ -n "$WEB_LISTEN_PORT" ]]; then
-    echo "found web_listen_port [${WEB_LISTEN_PORT}]"
-    web_listen_port = $WEB_LISTEN_PORT
+  if [[ -n "$HTTP_LISTEN_PORT" ]]; then
+    echo "found HTTP_LISTEN_PORT [${HTTP_LISTEN_PORT}]"
+    httpListenPort = $HTTP_LISTEN_PORT
   fi
 
-  if [[ -n "$HEALTH_PORT" ]]; then
-    echo "found web_listen_port [${HEALTH_PORT}]"
-    health_port = $HEALTH_PORT
+  if [[ -n "$HEALTH_CHECK_PORT" ]]; then
+    echo "found HTTP_LISTEN_PORT [${HEALTH_CHECK_PORT}]"
+    healthCheckPort = $HEALTH_CHECK_PORT
   fi
 
-  local jdbc_block=""
+  local sqlServerBlock=""
 
-  for node in $nodes ; do
-    jdbc_block+="server $node $node:${db_listen_port} check port ${health_port}"$'\n'
+  for node in $nodeList ; do
+    sqlServerBlock+="server $node $node:${sqlListenPort} check port ${healthCheckPort}"$'\n'
   done
 
-  local ui_block=""
+  local httpServerBlock=""
 
-  for node in $nodes ; do
-    ui_block+="server $node $node:${web_listen_port} check port ${health_port}"$'\n'
+  for node in $nodeList ; do
+    httpServerBlock+="server $node $node:${httpListenPort} check port ${healthCheckPort}"$'\n'
   done
 
   cat > /usr/local/etc/haproxy/haproxy.cfg <<EOF
@@ -70,22 +70,22 @@ defaults
     option              clitcpka
     option              tcplog
 
-listen cockroach-jdbc
-    bind :${db_bind_port}
+listen cockroach-sql
+    bind :${sqlBindPort}
     mode tcp
     balance roundrobin
     option httpchk GET /health?ready=1
-    ${jdbc_block}
+    ${sqlServerBlock}
 
-listen cockroach-ui
-    bind :${web_bind_port}
+listen cockroach-http
+    bind :${httpBindPort}
     mode tcp
     balance roundrobin
     option httpchk GET /health
-    ${ui_block}
+    ${httpServerBlock}
 
 listen stats
-    bind :${stats_bind_port}
+    bind :${statsBindPort}
     mode http
     stats enable
     stats hide-version
@@ -98,7 +98,7 @@ cat /usr/local/etc/haproxy/haproxy.cfg
 }
 
 if [[ -z "$NODES" ]]; then
-    echo "The NODES environment variable is Required.  It is an space delimited list of CockroachDB node Hostnames.  For example 'node1 node2 node3'" 1>&2
+    echo "The NODES environment variable is required.  It is an space delimited list of CockroachDB node hostnames.  For example 'node1 node2 node3'" 1>&2
     exit 1
 fi
 

@@ -21,9 +21,9 @@ services:
     hostname: lb
     image: timveil/dynamic-haproxy:latest
     ports:
-      - "26257:26257"
-      - "8080:8080"
-      - "8081:8081"
+      - "26257:26257" # SQL Port
+      - "8080:8080"   # HTTP Port
+      - "8081:8081"   # Stats Port
     environment:
       - NODES=crdb-0 crdb-1 crdb-2
     links:
@@ -33,13 +33,13 @@ services:
 ```
 
 The following `environment` variables are supported by the Docker image.
-* `NODES` - __Required__. A space-delimited list of CockroachDB node hostnames in the cluster that will be fronted by HAProxy.  For example, `crdb-0 crdb-1 crdb-2`.
-* `DB_BIND_PORT` - The database port that HAProxy will `bind` and ultimately expose.  The default is `26257`.
-* `WEB_BIND_PORT` - The web port that HAProxy will `bind` and ultimately expose.  The default is `8080`.
-* `STATS_BIND_PORT` - The stats port that HAProxy will `bind` and ultimately expose.  The default is `8081`.
-* `DB_LISTEN_PORT` - The port that the CockroachDB node communicates over.
-* `WEB_LISTEN_PORT` - The port that the CockroachDB admin ui communicates over.
-* `HEALTH_PORT` - The port that the CockroachDB uses for health checks.
+* `NODES` - __Required__. A space-delimited list of CockroachDB node hostnames (as defined above in `docker-compose.yml`) that will be fronted by HAProxy.  For example, `crdb-0 crdb-1 crdb-2`.
+* `SQL_BIND_PORT` - The port that HAProxy will `bind` and ultimately expose for CockroachDB SQL connections.  The default is `26257`.
+* `HTTP_BIND_PORT` - The port that HAProxy will `bind` and ultimately expose for CockroachDB HTTP connections.  The default is `8080`.
+* `STATS_BIND_PORT` - The port that HAProxy will `bind` and ultimately expose for the HAProxy Statistics Report UI.  The default is `8081`.
+* `SQL_LISTEN_PORT` - The port that the CockroachDB exposes for SQL connections over.  The default is `26257`.
+* `HTTP_LISTEN_PORT` - The port that the CockroachDB exposes for HHTP connections over.  The default is `8080`.
+* `HEALTH_CHECK_PORT` - The port that the CockroachDB uses for health checks.  The default is `8080`.
 
 ## Building the Image
 ```bash

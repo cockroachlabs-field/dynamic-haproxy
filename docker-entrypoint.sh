@@ -93,8 +93,6 @@ listen stats
     stats uri /
 EOF
 
-cat /usr/local/etc/haproxy/haproxy.cfg
-
 }
 
 if [[ -z "$NODES" ]]; then

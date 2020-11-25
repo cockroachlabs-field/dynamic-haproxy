@@ -1,25 +1,55 @@
 #!/bin/bash
-
+set -e
 
 function buildConfig() {
 
-  db_bind_port="26257"
-  web_bind_port="8080"
-  stats_bind_port="8081"
+  local db_bind_port="26257"
+  local web_bind_port="8080"
+  local stats_bind_port="8081"
 
-  db_listen_port="26257"
-  web_listen_port="8080"
-  health_port="8080"
+  local db_listen_port="26257"
+  local web_listen_port="8080"
+  local health_port="8080"
 
-  nodes="db1 db2 db3 db4"
+  local nodes=$NODES
 
-  jdbc_block=""
+  if [[ -n "$DB_BIND_PORT" ]]; then
+    echo "found DB_BIND_PORT [${DB_BIND_PORT}]"
+    db_bind_port = $DB_BIND_PORT
+  fi
+
+  if [[ -n "$WEB_BIND_PORT" ]]; then
+    echo "found WEB_BIND_PORT [${WEB_BIND_PORT}]"
+    web_bind_port = $WEB_BIND_PORT
+  fi
+
+  if [[ -n "$STATS_BIND_PORT" ]]; then
+    echo "found STATS_BIND_PORT [${STATS_BIND_PORT}]"
+    stats_bind_port = $STATS_BIND_PORT
+  fi
+
+  if [[ -n "$DB_LISTEN_PORT" ]]; then
+    echo "found DB_LISTEN_PORT [${DB_LISTEN_PORT}]"
+    db_listen_port = $DB_LISTEN_PORT
+  fi
+
+  if [[ -n "$WEB_LISTEN_PORT" ]]; then
+    echo "found web_listen_port [${WEB_LISTEN_PORT}]"
+    web_listen_port = $WEB_LISTEN_PORT
+  fi
+
+  if [[ -n "$HEALTH_PORT" ]]; then
+    echo "found web_listen_port [${HEALTH_PORT}]"
+    health_port = $HEALTH_PORT
+  fi
+
+  local jdbc_block=""
 
   for node in $nodes ; do
     jdbc_block+="server $node $node:${db_listen_port} check port ${health_port}"$'\n'
   done
 
-  ui_block=""
+  local ui_block=""
 
   for node in $nodes ; do
     ui_block+="server $node $node:${web_listen_port} check port ${health_port}"$'\n'
@@ -67,7 +97,10 @@ cat /usr/local/etc/haproxy/haproxy.cfg
 
 }
 
-
+if [[ -z "$NODES" ]]; then
+    echo "The NODES environment variable is Required.  It is an space delimited list of CockroachDB node Hostnames.  For example 'node1 node2 node3'" 1>&2
+    exit 1
+fi
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then

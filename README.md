@@ -60,5 +60,6 @@ running the image with environment variables
 ```bash
 docker run \
     --env "NODES=crdb-0 crdb-1 crdb-2" \
+    --env SQL_BIND_PORT=5432 \
     -it timveil/dynamic-haproxy:latest
 ```

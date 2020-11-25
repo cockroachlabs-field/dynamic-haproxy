@@ -3,56 +3,56 @@ set -e
 
 function buildConfig() {
 
-  local sqlBindPort="26257"
-  local httpBindPort="8080"
-  local statsBindPort="8081"
+  local _sql_bind_port="26257"
+  local _http_bind_port="8080"
+  local _stats_bind_port="8081"
 
-  local sqlListenPort="26257"
-  local httpListenPort="8080"
-  local healthCheckPort="8080"
+  local _sql_listen_port="26257"
+  local _http_listen_port="8080"
+  local _health_check_port="8080"
 
-  local nodeList=$NODES
+  local _node_list=$NODES
 
   if [[ -n "$SQL_BIND_PORT" ]]; then
     echo "found SQL_BIND_PORT [${SQL_BIND_PORT}]"
-    sqlBindPort = $SQL_BIND_PORT
+    _sql_bind_port=$SQL_BIND_PORT
   fi
 
   if [[ -n "$HTTP_BIND_PORT" ]]; then
     echo "found HTTP_BIND_PORT [${HTTP_BIND_PORT}]"
-    httpBindPort = $HTTP_BIND_PORT
+    _http_bind_port=$HTTP_BIND_PORT
   fi
 
   if [[ -n "$STATS_BIND_PORT" ]]; then
     echo "found STATS_BIND_PORT [${STATS_BIND_PORT}]"
-    statsBindPort = $STATS_BIND_PORT
+    _stats_bind_port=$STATS_BIND_PORT
   fi
 
   if [[ -n "$SQL_LISTEN_PORT" ]]; then
     echo "found SQL_LISTEN_PORT [${SQL_LISTEN_PORT}]"
-    sqlListenPort = $SQL_LISTEN_PORT
+    _sql_listen_port=$SQL_LISTEN_PORT
   fi
 
   if [[ -n "$HTTP_LISTEN_PORT" ]]; then
     echo "found HTTP_LISTEN_PORT [${HTTP_LISTEN_PORT}]"
-    httpListenPort = $HTTP_LISTEN_PORT
+    _http_listen_port=$HTTP_LISTEN_PORT
   fi
 
   if [[ -n "$HEALTH_CHECK_PORT" ]]; then
     echo "found HTTP_LISTEN_PORT [${HEALTH_CHECK_PORT}]"
-    healthCheckPort = $HEALTH_CHECK_PORT
+    _health_check_port=$HEALTH_CHECK_PORT
   fi
 
-  local sqlServerBlock=""
+  local _sql_server_block=""
 
   for node in $nodeList ; do
-    sqlServerBlock+="server $node $node:${sqlListenPort} check port ${healthCheckPort}"$'\n'
+    _sql_server_block+="server $node $node:${_sql_listen_port} check port ${_health_check_port}"$'\n'
   done
 
-  local httpServerBlock=""
+  local _http_server_block=""
 
   for node in $nodeList ; do
-    httpServerBlock+="server $node $node:${httpListenPort} check port ${healthCheckPort}"$'\n'
+    _http_server_block+="server $node $node:${_http_listen_port} check port ${_health_check_port}"$'\n'
   done
 
   cat > /usr/local/etc/haproxy/haproxy.cfg <<EOF
@@ -71,21 +71,21 @@ defaults
     option              tcplog
 
 listen cockroach-sql
-    bind :${sqlBindPort}
+    bind :${_sql_bind_port}
     mode tcp
     balance roundrobin
     option httpchk GET /health?ready=1
-    ${sqlServerBlock}
+    ${_sql_server_block}
 
 listen cockroach-http
-    bind :${httpBindPort}
+    bind :${_http_bind_port}
     mode tcp
     balance roundrobin
     option httpchk GET /health
-    ${httpServerBlock}
+    ${_http_server_block}
 
 listen stats
-    bind :${statsBindPort}
+    bind :${_stats_bind_port}
     mode http
     stats enable
     stats hide-version

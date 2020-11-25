@@ -1,4 +1,4 @@
-# dynamic-haproxy
+# CockroachDB Dynamic HAProxy
 A Docker image that simplifies the deployment of HAProxy in front of a CockroachDB Docker cluster.  This image is intended to be used for local development, testing and demos.  The following `docker-compose.yml` snippet highlights how it may be used, specifically the `lb` service. 
 
 ```yaml

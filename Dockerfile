@@ -7,7 +7,3 @@ RUN chmod a+x /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
-
-EXPOSE 26257
-EXPOSE 8080
-EXPOSE 8081

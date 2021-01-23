@@ -96,7 +96,7 @@ EOF
 }
 
 if [[ -z "$NODES" ]]; then
-    echo "The NODES environment variable is required.  It is an space delimited list of CockroachDB node hostnames.  For example 'node1 node2 node3'" 1>&2
+    echo "The NODES environment variable is required.  It is a space delimited list of CockroachDB node hostnames.  For example 'node1 node2 node3'" 1>&2
     exit 1
 fi
 

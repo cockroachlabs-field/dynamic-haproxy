@@ -2,7 +2,7 @@ FROM haproxy:2.3
 
 LABEL maintainer="tjveil@gmail.com"
 
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod a+x /docker-entrypoint.sh

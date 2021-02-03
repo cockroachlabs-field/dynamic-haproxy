@@ -52,7 +52,7 @@ function buildConfig() {
   local _http_server_block=""
 
   for node in $_node_list ; do
-    _http_server_block+="server $node $node:${_http_listen_port} check port ${_health_check_port}"$'\n'
+    _http_server_block+="server $node $node:${_http_listen_port} check port ${_health_check_port} ssl verify none"$'\n'
   done
 
   cat > /usr/local/etc/haproxy/haproxy.cfg <<EOF

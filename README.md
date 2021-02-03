@@ -43,17 +43,17 @@ The following `environment` variables are supported by the Docker image.
 
 ## Building the Image
 ```bash
-docker build --no-cache -t timveil/dynamic-haproxy:latest .
+docker build --no-cache -t timveil/dynamic-haproxy:beta .
 ```
 
 ## Publishing the Image
 ```bash
-docker push timveil/dynamic-haproxy:latest
+docker push timveil/dynamic-haproxy:beta
 ```
 
 ## Running the Image
 ```bash
-docker run -it timveil/dynamic-haproxy:latest
+docker run -it timveil/dynamic-haproxy:beta
 ```
 
 running the image with environment variables
@@ -61,5 +61,5 @@ running the image with environment variables
 docker run \
     --env "NODES=crdb-0 crdb-1 crdb-2" \
     --env SQL_BIND_PORT=5432 \
-    -it timveil/dynamic-haproxy:latest
+    -it timveil/dynamic-haproxy:beta
 ```

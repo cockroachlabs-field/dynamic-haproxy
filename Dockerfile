@@ -1,4 +1,4 @@
-FROM haproxy:2.3
+FROM haproxy:2.4
 
 LABEL maintainer="tjveil@gmail.com"
 

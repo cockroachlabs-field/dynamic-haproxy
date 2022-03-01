@@ -64,7 +64,7 @@ global
 
 defaults
     log                 global
-    timeout connect     5m
+    timeout connect     30m
     timeout client      30m
     timeout server      30m
     option              clitcpka

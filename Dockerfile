@@ -1,7 +1,5 @@
 FROM haproxy:2.6
 
-LABEL maintainer="tjveil@gmail.com"
-
 USER root
 
 RUN apt-get update && apt-get upgrade -y

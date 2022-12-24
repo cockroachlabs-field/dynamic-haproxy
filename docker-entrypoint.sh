@@ -59,8 +59,6 @@ function buildConfig() {
 global
     log stdout format raw local0 info
     maxconn 4096
-    nbproc 1
-    nbthread 4
 
 defaults
     log                 global
